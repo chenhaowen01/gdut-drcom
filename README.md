@@ -48,3 +48,11 @@ gdut-drcom
                                             default as /etc/gdut-drcom.conf.
     [-h, --help]                        Print this message.
 ```
+
+# reference
+数据包结构参考了[drcom-generic][1]
+
+心跳包校验和算法参考了[drcom-generic issues #82][2]
+
+[1]: https://github.com/drcoms/drcom-generic
+[2]: https://github.com/drcoms/drcom-generic/issues/82

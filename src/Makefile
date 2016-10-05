@@ -39,4 +39,8 @@ md5.o md4.o sha1.o:
 
 .PHONY : clean
 clean:
-	rm -f gdut-drcom *.o
+ifeq ($(LANG),)
+	del gdut-drcom.exe *.o
+else
+	$(RM) gdut-drcom *.o
+endif

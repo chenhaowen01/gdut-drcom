@@ -1,28 +1,26 @@
 #CC:=gcc
 CFLAGS+=-DDEBUG
-#cryptlib=openssl
-#ifeq ($(lib), openssl)
-#	CFLAGS+=-D_WITH_OPENSSL_
-#	LIBS:=-lcrypto 
-#else
-#	LIBS:=-lpolarssl
-#endif
 
-ifeq ($(cryptlib), polarssl)
-	CFLAGS+=-D__WITH_POLARSSL__
-	LIBS:=-lpolarssl
-else ifeq ($(cryptlib), gcrypt)
-	CFLAGS+=-D__WITH_GCRYPT__
-	LIBS:=-lgcrypt
-else
-	LIBS:=-lcrypto
-endif
-	
+objects=gdut-drcom.o config.o auth.o
 
 all: gdut-drcom 
 	@echo gdut-drcom
-gdut-drcom: gdut-drcom.o config.o auth.o
-	$(CC) gdut-drcom.o config.o auth.o -o gdut-drcom $(CFLAGS) $(LIBS)
+
+ifeq ($(cryptlib), polarssl)
+CFLAGS+=-D__WITH_POLARSSL__
+LIBS:=-lpolarssl
+else ifeq ($(cryptlib), gcrypt)
+CFLAGS+=-D__WITH_GCRYPT__
+LIBS:=-lgcrypt
+else ifeq ($(cryptlib), openssl)
+CFLAGS+=-D__WITH_OPENSSL__
+LIBS:=-lcrypto
+else
+objects+= md5.o md4.o sha1.o
+endif
+
+gdut-drcom: $(objects)
+	$(CC) *.o -o gdut-drcom $(CFLAGS) $(LIBS)
 
 gdut-drcom.o: gdut-drcom.c
 	$(CC) $(CFLAGS) -c $<
@@ -32,6 +30,9 @@ config.o: config.c config.h
 auth.o: auth.c config.h
 	$(CC) $(CFLAGS) -c $<
 
+md5.o md4.o sha1.o:
+	$(CC) -c crypt/*.c
 
+.PHONY : clean
 clean:
 	rm -f gdut-drcom *.o

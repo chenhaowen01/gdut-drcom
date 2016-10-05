@@ -10,6 +10,7 @@
     #include <netinet/in.h>
     #include <arpa/inet.h>
     #define SOCKET int
+	#define INVALID_SOCKET -1
 #endif
 
 #ifdef __WITH_POLARSSL__
@@ -115,7 +116,7 @@ int auth(void)
     local_addr.sin_port=htons(drcom_config.remote_port);
 
     SOCKET client_sockfd;
-    if ((client_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((client_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET)
     {
         fprintf(stderr, "error!\n");
         fflush(stderr);

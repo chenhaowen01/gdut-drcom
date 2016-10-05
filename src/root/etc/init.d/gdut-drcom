@@ -3,8 +3,15 @@
 START=99
 
 start() {
-	remote_ip=$(uci get gdut_drcom.@gdut_drcom[0].remote_ip)
-	keep_alive1_flag=$(uci get gdut_drcom.@gdut_drcom[0].keep_alive1_flag)
+	remote_ip=$(uci get gdut_drcom.@gdut_drcom[0].remote_ip 2>/dev/null)
+	keep_alive1_flag=$(uci get gdut_drcom.@gdut_drcom[0].keep_alive1_flag 2>/dev/null)
+	enable=$(uci get gdut_drcom.@gdut_drcom[0].enable 2>/dev/null)
+	if [ "$enable"x = "1"x ]; then
+		/etc/init.d/gdut-drcom enable
+	else
+		/etc/init.d/gdut-drcom disable
+		return
+	fi
 
 	cmd="service_start /usr/bin/gdut-drcom -c /etc/gdut-drcom.conf "
 	if [ -n "$remote_ip" ]; then
@@ -17,8 +24,8 @@ start() {
 
 	eval $cmd
 }
-
 stop()
 {
 	service_stop /usr/bin/gdut-drcom
+	return 0
 }

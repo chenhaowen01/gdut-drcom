@@ -24,7 +24,7 @@ keep_alive_flag = s:option(Value, "keep_alive1_flag", translate("Keep alive1 fla
 
 local apply = luci.http.formvalue("cbi.apply")
 if apply then
-	io.popen("echo gdut-drcom apply >> /root/gdut-drcom.log")
+	io.popen("/etc/init.d/gdut-drcom restart")
 end
 
 return m

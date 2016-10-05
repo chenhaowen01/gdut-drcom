@@ -1,0 +1,24 @@
+#!/bin/sh /etc/rc.common
+#(c) 2010 ivan_wl
+START=99
+
+start() {
+	remote_ip=$(uci get gdut_drcom.@gdut_drcom[0].remote_ip)
+	keep_alive1_flag=$(uci get gdut_drcom.@gdut_drcom[0].keep_alive1_flag)
+
+	cmd="service_start /usr/bin/gdut-drcom -c /etc/gdut-drcom.conf "
+	if [ -n "$remote_ip" ]; then
+		cmd=$cmd"--remote_ip=$remote_ip "
+	fi
+	if [ -n "$keep_alive1_flag" ]; then
+		cmd=$cmd"--keep_alive1_flag=$keep_alive1_flag "
+	fi
+	cmd=$cmd"1> /tmp/gdut-drcom.log 2>/tmp/gdut-drcom_error.log &"
+
+	eval $cmd
+}
+
+stop()
+{
+	service_stop /usr/bin/gdut-drcom
+}

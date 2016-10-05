@@ -1,0 +1,6 @@
+
+config gdut_drcom
+    option remote_ip '0.0.0.0'
+    option keep_alive1_flag '2a'
+    option enable '1'
+

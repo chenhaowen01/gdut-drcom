@@ -1,8 +1,0 @@
-
-config gdut-drcom
-	option username '3114000294'
-	option password '166511'
-    option remote-ip '0.0.0.0'
-    option keep-alive1-flag '2a'
-	option enable '1'
-

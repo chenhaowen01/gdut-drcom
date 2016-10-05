@@ -24,12 +24,12 @@
 ```bash
 tar xvjf OpenWrt-SDK-15.05-ramips-rt305x_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
 cd OpenWrt-SDK-15.05-ramips-rt305x_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64
-git clone git@github.com:chenhaowen01/gdut-drcom.git package/gdut-drcom
+git clone https://github.com/chenhaowen01/gdut-drcom.git
 make package/gdut-drcom/compile
 ```
 * 主机编译
 ```bash
-git clone git@github.com:chenhaowen01/gdut-drcom.git
+git clone https://github.com/chenhaowen01/gdut-drcom.git
 cd gdut-drcom/src
 # 可通过cryptlib变量指定加密库，留空表示不使用第三方库
 # cryptlib=[openssl, polarssl, gcrypt]

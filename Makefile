@@ -13,7 +13,7 @@ define Package/gdut-drcom
 	SECTION:=utils
 	CATEGORY:=Utilities
 	DEFAULT:=y
-	TITLE:=xdh3c -- a h3c client for linux
+	TITLE:=gdut-drcom -- a third-party drcom client for gdut
 #	DEPENDS:=+libgcrypt
 #	DEPENDS:=+libopenssl
 #	DEPENDS:=+libpolarssl

@@ -2,29 +2,15 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-/*
-#ifdef _WITH_OPENSSL_
-    #include <openssl/md5.h>
-    #include <openssl/md4.h>
-    #include <openssl/sha.h>
-
-    #define _MD5    MD5
-    #define _MD4    MD4
-    #define _SHA1   SHA1
-#else
-    #include <polarssl/md5.h>
-    #include <polarssl/md4.h>
-    #include <polarssl/sha1.h>
-
-    #define _MD5    md5
-    #define _MD4    md4
-    #define _SHA1   sha1
+#ifdef WIN32
+    #include <winsock2.h>
+    //#define SOCKET int
+#else   
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #define SOCKET int
 #endif
-*/
 
 #ifdef __WITH_POLARSSL__
     #include <polarssl/md5.h>
@@ -73,12 +59,21 @@ static void gen_ka1_checksum(char *checksum, char *seed, unsigned char mode);
 static void gen_ka2_checksum(char *data, int len, char *checksum);
 
 static int32_t drcomCRC32(char *data, int len);
-static void print_as_hex(char *buf, int len);
+static void print_as_hex(unsigned char *buf, int len);
 /****local functions****/
 
 
 int auth(void)
 {
+#ifdef WIN32
+    WORD sockVersion = MAKEWORD(2,2);
+    WSADATA wsaData;
+    if(WSAStartup(sockVersion, &wsaData)!=0)
+    {
+        return 0;
+    }
+#endif
+
     /*variavles of packets*/
     unsigned char pkt_data[1024] = {0};      //packet data buf
     int length;                         //packet data length
@@ -94,38 +89,50 @@ int auth(void)
     unsigned char kp2_cnt = 0x01;
     unsigned char ka2_key[4] = {0};
     unsigned char ka2_flag[2] = {0};
-    unsigned char rand[2] = {0};
+    unsigned char rand_num[2] = {0};
     /*variables used in keep alive2 paket*/
 
-	struct sockaddr_in remote_addr;
-	struct sockaddr_in local_addr;
+    struct sockaddr_in remote_addr;
+    struct sockaddr_in local_addr;
     int retry_cnt;
 
-	memset(&remote_addr, 0, sizeof(remote_addr));
-	remote_addr.sin_family = AF_INET;
-	remote_addr.sin_addr.s_addr = inet_addr(drcom_config.remote_ip);
-	remote_addr.sin_port=htons(drcom_config.remote_port);
+    memset(&remote_addr, 0, sizeof(remote_addr));
+    remote_addr.sin_family = AF_INET;
+#ifdef WIN32
+    remote_addr.sin_addr.S_un.S_addr = inet_addr(drcom_config.remote_ip);
+#else
+    remote_addr.sin_addr.s_addr = inet_addr(drcom_config.remote_ip);
+#endif
+    remote_addr.sin_port=htons(drcom_config.remote_port);
 
-	memset(&local_addr, 0, sizeof(local_addr));
-	local_addr.sin_family = AF_INET;
-	local_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
-	local_addr.sin_port=htons(drcom_config.remote_port);
+    memset(&local_addr, 0, sizeof(local_addr));
+    local_addr.sin_family = AF_INET;
+#ifdef WIN32
+    local_addr.sin_addr.S_un.S_addr = inet_addr("0.0.0.0");
+#else
+    local_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
+#endif
+    local_addr.sin_port=htons(drcom_config.remote_port);
 
-	int client_sockfd;
-	if ((client_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-	{
-		fprintf(stderr, "error!\n");
+    SOCKET client_sockfd;
+    if ((client_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        fprintf(stderr, "error!\n");
         fflush(stderr);
-		return -1;
-	}
+        return -1;
+    }
 
-	int sin_size;
-	sin_size = sizeof(struct sockaddr_in);
-	bind(client_sockfd, (struct sockaddr *) &local_addr, sin_size);
+    int sin_size;
+    sin_size = sizeof(struct sockaddr_in);
+    bind(client_sockfd, (struct sockaddr *) &local_addr, sin_size);
+#ifdef WIN32
+    int timeout = 2000;
+#else
 
     struct timeval timeout;
     timeout.tv_sec=2;
     timeout.tv_usec=0;
+#endif
     setsockopt(client_sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(struct timeval));
 
 
@@ -134,14 +141,14 @@ HEART_BEAT_START:
     fflush(stdout);
     kp1_cnt = 1;
     kp2_cnt = 0;
-    srandom((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));
     while (1)
     {
         retry_cnt = 1;
         while (1)
         {
             length = make_keep_alive1_pkt1(pkt_data, kp1_cnt);
-    	    sendto(client_sockfd, pkt_data, length, 0,\
+            sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
             fprintf(stdout, "<==[sended kap1_1 request %d] len = %d\n",\
                     kp1_cnt, length);
@@ -153,7 +160,7 @@ HEART_BEAT_START:
                 goto HEART_BEAT_START;
             }
             memset(pkt_data, 0x00, 1024);
-		    if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
+            if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
                 fprintf(stdout, "recv kap1_1 timeout, retry %d!\n", retry_cnt++);
@@ -178,7 +185,7 @@ HEART_BEAT_START:
         while (1)
         {
             length = make_keep_alive1_pkt2(pkt_data, seed, host_ip, kp1_cnt);
-	        sendto(client_sockfd, pkt_data, length, 0,\
+            sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
             fprintf(stdout, "<==[sended kap1_2 request %d] len = %d\n",\
                     kp1_cnt, length);
@@ -190,7 +197,7 @@ HEART_BEAT_START:
             {
                 goto HEART_BEAT_START;
             }
-    		if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0, \
+            if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0, \
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
                 fprintf(stdout, "recv kap1_2 timeout, retry %d!\n", retry_cnt++);
@@ -209,15 +216,15 @@ HEART_BEAT_START:
         kp1_cnt++;
 
         retry_cnt = 0;
-        int16_t rand_tmp = random() % 0x10000;
-        rand[0] = rand_tmp / 0x100;
-        rand[1] = rand_tmp % 0x100;
+        int16_t rand_tmp = rand() % 0x10000;
+        rand_num[0] = rand_tmp / 0x100;
+        rand_num[1] = rand_tmp % 0x100;
 
         sleep(3);
         while (1)
         {
-            length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand, ka2_key);
-    	    sendto(client_sockfd, pkt_data, length, 0,\
+            length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key);
+            sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
             fprintf(stdout, "<==[sended kap2_1 request %d] len = %d\n",\
                     kp2_cnt, length);
@@ -229,7 +236,7 @@ HEART_BEAT_START:
                 goto HEART_BEAT_START;
             }
             memset(pkt_data, 0x00, 1024);
-		    if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
+            if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
                 fprintf(stdout, "recv kap2_1 timeout, retry %d!\n", retry_cnt++);
@@ -259,8 +266,8 @@ HEART_BEAT_START:
 
         while (1)
         {
-            length = make_keep_alive2_pkt2(pkt_data, kp2_cnt, ka2_flag, rand, ka2_key, host_ip);
-    	    sendto(client_sockfd, pkt_data, length, 0,\
+            length = make_keep_alive2_pkt2(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key, host_ip);
+            sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
             fprintf(stdout, "<==[sended kap2_2 request %d] len = %d\n", \
                     kp2_cnt, length);
@@ -272,7 +279,7 @@ HEART_BEAT_START:
                 goto HEART_BEAT_START;
             }
             memset(pkt_data, 0x00, 1024);
-		    if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
+            if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
                 fprintf(stdout, "recv kap2_2 timeout, retry %d!\n", retry_cnt++);
@@ -292,12 +299,17 @@ HEART_BEAT_START:
 
         sleep(17);
     }
+#ifdef WIN32
+    closesocket(client_sockfd);
+    WSACleanup();
+#else
 
     close(client_sockfd);
+#endif
     return 0;
 }
 
-static void print_as_hex(char *buf, int len)
+static void print_as_hex(unsigned char *buf, int len)
 {
     int i;
     for (i=0; i<len; i++)

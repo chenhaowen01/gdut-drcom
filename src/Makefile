@@ -19,6 +19,10 @@ else
 objects+= md5.o md4.o sha1.o
 endif
 
+ifeq ($(LANG),)
+LIBS+= -lws2_32
+endif
+
 gdut-drcom: $(objects)
 	$(CC) *.o -o gdut-drcom $(CFLAGS) $(LIBS)
 

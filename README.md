@@ -8,16 +8,17 @@
 这是一个适用于广东工业大学的第三方 drcom 客户端（drcom 5.2.1p），目前支持 Linux 平台（包括OpenWrt等用于路由器的发行版）。
 # install
 * OpenWrt
-1.使用 opkg（推荐）
+  * 使用 opkg（推荐）
   ```bash
   opkg install gdut-drcom_xxx.ipk
   ```
-  2.手动安装（仅在 opkg 安装失败时使用）
+  * 手动安装（仅在 opkg 安装失败时使用）
   ```bash
   tar xvf gdut-drcom_xxx.tar -C /tmp
   cd /tmp/gdut-drocm
   sh install.sh
   ```
+
 # compile
 * 使用 OpenWrt SDK（以rampis平台为例）
 ```bash

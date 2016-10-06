@@ -84,10 +84,10 @@ static void print_help(char *name)
         "          ___  ___/ /_ __/ /_    ___/ /__________  __ _ \n"
         "         / _ `/ _  / // / __/   / _  / __/ __/ _ \\/  ' \\\n"
         "         \\_, /\\_,_/\\_,_/\\__/    \\_,_/_/  \\__/\\___/_/_/_/\n"
-        "        /___/                                           \n\n"
+        "        /___/   "
             );
 
-    fprintf(stdout, "                A third-party drcom client for gdut.\n\n");
+    fprintf(stdout, "A third-party drcom client for gdut.\n");
     fprintf(stdout, "usage:\n");
     fprintf(stdout, "  %s\n", name);
     fprintf(stdout, "    --remote-ip <ip addr>               The server ip.\n");
@@ -95,8 +95,7 @@ static void print_help(char *name)
     fprintf(stdout, "    [--remote-port <port>]              The server port, default as 61440.\n");
     fprintf(stdout, "    [--keep-alive1-flag <flag>]         The keep alive 1 packet's flag.\n"
                     "                                            default as 00.\n");
-    fprintf(stdout, "    [-c, --config-file <file>]          The path to config file. \n"
-                    "                                            default as /etc/gdut-drcom.conf.\n");
+    fprintf(stdout, "    [-c, --config-file <file>]          The path to config file.\n");
     fprintf(stdout, "    [-h, --help]                        Print this message.\n");
 }
 

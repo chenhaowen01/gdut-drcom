@@ -32,6 +32,7 @@ endef
 define Package/gdut-drcom/postinst
 #!/bin/sh
 echo "post install: patching ppp.sh"
+sed -i '/#added by gdut-drcom/d' /lib/netifd/proto/ppp.sh
 sed -i '/proto_run_command/i username=$$(echo -e "\\r\\n$$username")    #added by gdut-drcom!' /lib/netifd/proto/ppp.sh
 echo "patched!"
 endef

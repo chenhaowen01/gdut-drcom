@@ -19,7 +19,28 @@ s.addremove = false
 s.anonymous = true
 
 enable = s:option(Flag, "enable", translate("Enable"))
+
+--[[enabledial = s:option(Flag, "enabledial", translate("Enable PPPoE Dial"))
+enabledial.default = enabledial.enabled
+
+ifname = s:option(ListValue, "ifname", translate("Interface name"))
+ifname:depends("enabledial", "1")
+for k, v in ipairs(luci.sys.net.devices()) do
+	if string.sub(v,0,3) == "eth" then
+		ifname:value(v)
+	end
+end
+
+username = s:option(Value, "username", translate("Username"))
+username:depends("enabledial", "1")
+password = s:option(Value, "password", translate("Password"))
+password:depends("enabledial", "1")
+password.password = true
+]]--
+macaddr = s:option(Value, "macaddr", translate("Mac address"))
+macaddr.datatype="macaddr"
 remote_ip = s:option(Value, "remote_ip", translate("Remote ip"))
+remote_ip.datatype="ipaddr"
 keep_alive_flag = s:option(Value, "keep_alive1_flag", translate("Keep alive1 flag"))
 
 local apply = luci.http.formvalue("cbi.apply")

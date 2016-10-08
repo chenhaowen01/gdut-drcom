@@ -40,10 +40,10 @@ start() {
 
 	cmd="service_start /usr/bin/gdut-drcom -c /etc/gdut-drcom.conf "
 	if [ -n "$remote_ip" ]; then
-		cmd=$cmd"--remote_ip=$remote_ip "
+		cmd=$cmd"--remote-ip=$remote_ip "
 	fi
 	if [ -n "$keep_alive1_flag" ]; then
-		cmd=$cmd"--keep_alive1_flag=$keep_alive1_flag "
+		cmd=$cmd"--keep-alive1-flag=$keep_alive1_flag "
 	fi
 	cmd=$cmd"1> /tmp/gdut-drcom.log 2>/tmp/gdut-drcom_error.log &"
 

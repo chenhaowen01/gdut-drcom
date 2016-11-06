@@ -5,7 +5,7 @@
 #ifdef WIN32
     #include <winsock2.h>
     //#define SOCKET int
-#else   
+#else
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
@@ -524,14 +524,21 @@ int make_keep_alive2_pkt2(char *buf, unsigned char cnt, char *flag,\
     memset(buf+index, 0, 4);
     index += 4;
 
-    gen_ka2_checksum(buf, index, buf+index);
+    //checksum
+    int checksum_p = index;
+    memset(buf+index, 0, 4);
     index += 4;
+
+//  gen_ka2_checksum(buf, index, buf+index);
+//  index += 4;
 
     memcpy(buf+index, host_ip, 4);
     index += 4;
 
     memset(buf+index, 0, 8);
     index +=8;
+
+    gen_ka2_checksum(buf, index, buf+checksum_p);
 
     return index;
 }
@@ -547,6 +554,6 @@ void gen_ka2_checksum(char *data, int len, char *checksum)
     }
     checksum_tmp &= 0xffff;
     checksum_tmp *= 0x2c7;
-    memcpy(checksum, (char*)&checksum, 4);
+    memcpy(checksum, (char*)&checksum_tmp, 4);
 }
 

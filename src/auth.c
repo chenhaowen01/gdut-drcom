@@ -524,7 +524,7 @@ int make_keep_alive2_pkt2(char *buf, unsigned char cnt, char *flag,\
     memset(buf+index, 0, 4);
     index += 4;
 
-    //checksum
+    //checksum placeholder
     int checksum_p = index;
     memset(buf+index, 0, 4);
     index += 4;

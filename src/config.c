@@ -56,7 +56,7 @@ int parse_config(char *conf_file_name)
 static int parse_line(char *buf, int size)
 {
     char *p;
-    struct option_s opt = {0};
+    struct option_s opt = {{0}};
 
     //comment
     p = strchr(buf, '#');

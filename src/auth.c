@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #ifdef WIN32
     #include <winsock2.h>
@@ -47,20 +49,20 @@
 
 #include "config.h"
 /****local functions****/
-static int make_keep_alive1_pkt1(char *buf, unsigned char cnt);
-static int make_keep_alive1_pkt2(char *buf, char *seed,\
-        char *host_ip, unsigned char cnt);
+static int make_keep_alive1_pkt1(uint8_t *buf, uint8_t cnt);
+static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
+        uint8_t *host_ip, uint8_t cnt);
 
-static int make_keep_alive2_pkt1(char *buf, unsigned char cnt, char *flag,\
-        char *rand, char *key);
-static int make_keep_alive2_pkt2(char *buf, unsigned char cnt, char *flag,\
-        char *rand, char *key, char *host_ip);
+static int make_keep_alive2_pkt1(uint8_t *buf, uint8_t cnt, uint8_t *flag,\
+        uint8_t *rand, uint8_t *key);
+static int make_keep_alive2_pkt2(uint8_t *buf, uint8_t cnt, uint8_t *flag,\
+        uint8_t *rand, uint8_t *key, uint8_t *host_ip);
 
-static void gen_ka1_checksum(char *checksum, char *seed, unsigned char mode);
-static void gen_ka2_checksum(char *data, int len, char *checksum);
+static void gen_ka1_checksum(uint8_t *checksum, uint8_t *seed, uint8_t mode);
+static void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum);
 
-static int32_t drcomCRC32(char *data, int len);
-static void print_as_hex(unsigned char *buf, int len);
+//static int32_t drcomCRC32(char *data, int len);
+static void print_as_hex(uint8_t *buf, int len);
 /****local functions****/
 
 
@@ -76,21 +78,21 @@ int auth(void)
 #endif
 
     /*variavles of packets*/
-    unsigned char pkt_data[1024] = {0};      //packet data buf
+    uint8_t pkt_data[1024] = {0};      //packet data buf
     int length;                         //packet data length
     /*variavles of packets*/
 
     /*variables used in keep alive1 paket*/
-    unsigned char seed[4];
-    unsigned char host_ip[4];
-    unsigned char kp1_cnt = 0x01;
+    uint8_t seed[4];
+    uint8_t host_ip[4];
+    uint8_t kp1_cnt = 0x01;
     /*variables used in keep alive1 paket*/
 
     /*variables used in keep alive2 paket*/
-    unsigned char kp2_cnt = 0x01;
-    unsigned char ka2_key[4] = {0};
-    unsigned char ka2_flag[2] = {0};
-    unsigned char rand_num[2] = {0};
+    uint8_t kp2_cnt = 0x01;
+    uint8_t ka2_key[4] = {0};
+    uint8_t ka2_flag[2] = {0};
+    uint8_t rand_num[2] = {0};
     /*variables used in keep alive2 paket*/
 
     struct sockaddr_in remote_addr;
@@ -123,7 +125,7 @@ int auth(void)
         return -1;
     }
 
-    int sin_size;
+    socklen_t sin_size;
     sin_size = sizeof(struct sockaddr_in);
     bind(client_sockfd, (struct sockaddr *) &local_addr, sin_size);
 #ifdef WIN32
@@ -310,7 +312,7 @@ HEART_BEAT_START:
     return 0;
 }
 
-static void print_as_hex(unsigned char *buf, int len)
+static void print_as_hex(uint8_t *buf, int len)
 {
     int i;
     for (i=0; i<len; i++)
@@ -323,6 +325,8 @@ static void print_as_hex(unsigned char *buf, int len)
     fflush(stdout);
 }
 
+/* unused*/
+/*
 static int32_t drcomCRC32(char *data, int len)
 {
     int ret = 0;
@@ -334,11 +338,12 @@ static int32_t drcomCRC32(char *data, int len)
     }
     return ret;
 }
+*/
 
-static int make_keep_alive1_pkt1(char *buf, unsigned char cnt)
+static int make_keep_alive1_pkt1(uint8_t *buf, uint8_t cnt)
 {
     buf[0] = 0x07;
-    buf[1] = (char) cnt;
+    buf[1] = cnt;
     buf[2] = 0x08;
     buf[3] = 0x00;
     buf[4] = 0x01;
@@ -349,21 +354,20 @@ static int make_keep_alive1_pkt1(char *buf, unsigned char cnt)
     return 8;
 }
 
-static int make_keep_alive1_pkt2(char *buf, char *seed,\
-        char *host_ip, unsigned char cnt)
+static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
+        uint8_t *host_ip, uint8_t cnt)
 {
     int index = 0;
     static int is_first = 1;
-    int temp_num;
 
-    unsigned char check_mode = seed[0] & 0x03;
+    uint8_t check_mode = seed[0] & 0x03;
 #ifdef DEBUG
     fprintf(stdout, "check mode: %d\n", check_mode);
     fflush(stdout);
 #endif
 
     buf[index++] = 0x07;           //code
-    buf[index++] = (char) cnt;     //id
+    buf[index++] = cnt;            //id
     buf[index++] = 0x60;           //length
     buf[index++] = 0x00;           //length
     buf[index++] = 0x03;           //type
@@ -400,7 +404,7 @@ static int make_keep_alive1_pkt2(char *buf, char *seed,\
     memcpy(buf+index, "\x00\x00\x00\x00", 4);
     index += 4;
     */
-    char checksum[8] = {0};
+    uint8_t checksum[8] = {0};
     gen_ka1_checksum(checksum, seed, check_mode);
 #ifdef DEBUG
     fprintf(stdout, "checksum: ");
@@ -415,17 +419,17 @@ static int make_keep_alive1_pkt2(char *buf, char *seed,\
     return index + 16*4;
 }
 
-static void gen_ka1_checksum(char *checksum, char *seed, unsigned char mode)
+static void gen_ka1_checksum(uint8_t *checksum, uint8_t *seed, uint8_t mode)
 {
-    char checksum_t[32] = {0};
+    uint8_t checksum_t[32] = {0};
     int32_t temp_num;
     switch (mode)
     {
         case 0:
             temp_num = 20000711;
-            memcpy(checksum, (char *)&temp_num, 4);
+            memcpy(checksum, (uint8_t *)&temp_num, 4);
             temp_num = 126;
-            memcpy(checksum+4, (char *)&temp_num, 4);
+            memcpy(checksum+4, (uint8_t *)&temp_num, 4);
             break;
         case 1:
             //md5
@@ -469,8 +473,8 @@ static void gen_ka1_checksum(char *checksum, char *seed, unsigned char mode)
 }
 
 
-int make_keep_alive2_pkt1(char *buf, unsigned char cnt, char *flag,\
-        char * rand, char *key)
+int make_keep_alive2_pkt1(uint8_t *buf, uint8_t cnt, uint8_t *flag,\
+        uint8_t * rand, uint8_t *key)
 {
     int index = 0;
     *(buf + index++) = 0x07;
@@ -499,8 +503,8 @@ int make_keep_alive2_pkt1(char *buf, unsigned char cnt, char *flag,\
     return index;
 }
 
-int make_keep_alive2_pkt2(char *buf, unsigned char cnt, char *flag,\
-        char *rand, char *key, char *host_ip)
+int make_keep_alive2_pkt2(uint8_t *buf, uint8_t cnt, uint8_t *flag,\
+        uint8_t *rand, uint8_t *key, uint8_t *host_ip)
 {
     int index = 0;
     *(buf + index++) = 0x07;
@@ -543,7 +547,7 @@ int make_keep_alive2_pkt2(char *buf, unsigned char cnt, char *flag,\
     return index;
 }
 
-void gen_ka2_checksum(char *data, int len, char *checksum)
+void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum)
 {
     int16_t * p = (int16_t *)data;
     int i;
@@ -554,6 +558,6 @@ void gen_ka2_checksum(char *data, int len, char *checksum)
     }
     checksum_tmp &= 0xffff;
     checksum_tmp *= 0x2c7;
-    memcpy(checksum, (char*)&checksum_tmp, 4);
+    memcpy(checksum, (uint8_t*)&checksum_tmp, 4);
 }
 

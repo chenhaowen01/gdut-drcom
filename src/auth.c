@@ -6,6 +6,7 @@
 #include <time.h>
 #ifdef WIN32
     #include <winsock2.h>
+    typedef int socklen_t;
     //#define SOCKET int
 #else
     #include <sys/socket.h>

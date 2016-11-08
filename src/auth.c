@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <time.h>
+#include <sys/time.h>
 #ifdef WIN32
     #include <winsock2.h>
     typedef int socklen_t;

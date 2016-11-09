@@ -5,16 +5,17 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <time.h>
-#include <endian.h>
 
 #ifdef WIN32
     #include <winsock2.h>
     typedef int socklen_t;
-    //#define SOCKET int
+    #define htole32(x) (x)
+    #define le32toh(x) (x)
 #else
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
+    #include <endian.h>
     #define SOCKET int
 	#define INVALID_SOCKET -1
 #endif

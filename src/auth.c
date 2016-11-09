@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/time.h>
+#include <time.h>
+#include <endian.h>
+
 #ifdef WIN32
     #include <winsock2.h>
     typedef int socklen_t;
@@ -62,7 +65,7 @@ static int make_keep_alive2_pkt2(uint8_t *buf, uint8_t cnt, uint8_t *flag,\
 static void gen_ka1_checksum(uint8_t *checksum, uint8_t *seed, uint8_t mode);
 static void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum);
 
-static int32_t drcomCRC32(char *data, int len);
+static uint32_t drcomCRC32(uint8_t *data, int len);
 static void print_as_hex(uint8_t *buf, int len);
 /****local functions****/
 
@@ -326,13 +329,13 @@ static void print_as_hex(uint8_t *buf, int len)
     fflush(stdout);
 }
 
-static int32_t drcomCRC32(char *data, int len)
+static uint32_t drcomCRC32(uint8_t *data, int len)
 {
-    int ret = 0;
+    uint32_t ret = 0;
     int i;
     for (i=0; i<len; i+=4)
     {
-        ret ^= *(int *)(data+i);
+        ret ^= *(uint32_t *)(data+i);
         ret &= 0xffffffff;
     }
     return ret;
@@ -390,15 +393,15 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     index += 4;
     /**/
     int32_t temp_num;
-    temp_num = 20000711;
-    memcpy(buf+index, (char *)&temp_num, 4);
+    temp_num = htole32(20000711);
+    memcpy(buf+index, (uint8_t*)&temp_num, 4);
     index += 4;
-    temp_num = 126;
-    memcpy(buf+index, (char *)&temp_num, 4);
+    temp_num = htole32(126);
+    memcpy(buf+index, (uint8_t*)&temp_num, 4);
     index += 4;
-    temp_num = (drcomCRC32(buf, index) * 19680126) & 0xffffffff;
+    temp_num = htole32(le32toh(drcomCRC32(buf, index)) * 19680126) & 0xffffffff;
     index -= 8;
-    memcpy(buf+index, (char *)&temp_num, 4);
+    memcpy(buf+index, (uint8_t *)&temp_num, 4);
     index += 4;
     memcpy(buf+index, "\x00\x00\x00\x00", 4);
     index += 4;

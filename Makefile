@@ -5,8 +5,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
  
 PKG_NAME:=gdut-drcom
 # Version: 1.0-1
-PKG_VERSION:=1.5
-PKG_RELEASE:=5b
+PKG_VERSION:=1.6
+PKG_RELEASE:=0
 PKG_MAINTAINER:=CHW 
 # PKG_SOURCE_URL:=
 define Package/gdut-drcom

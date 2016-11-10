@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
             {"remote-ip",           required_argument,  0,  0},
             {"remote-port",         required_argument,  0,  1},
             {"keep-alive1-flag",    required_argument,  0,  2},
+            {"enable-crypt",        no_argument,        0,  3},
             {0,             0,                  0,  0},
         };
         opt = getopt_long(argc, argv, "hc:", long_options, &option_index);
@@ -49,6 +50,9 @@ int main(int argc, char *argv[])
                 break;
             case 2:     //keep_alive1_flag
                 sscanf(optarg, "%02hhx", &drcom_config.keep_alive1_flag);
+                break;
+            case 3:
+                drcom_config.enable_crypt = 1;
                 break;
             case 'c':
                 strcpy(conf_file_name, optarg);
@@ -72,6 +76,7 @@ int main(int argc, char *argv[])
     fprintf(stdout, "drcom_config.remote_ip = %s\n", drcom_config.remote_ip);
     fprintf(stdout, "drcom_config.remote_port = %d\n", drcom_config.remote_port);
     fprintf(stdout, "drcom_config.keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
+    fprintf(stdout, "drcom_config.enable_crypt = %d\n", drcom_config.enable_crypt);
     fflush(stdout);
 #endif
 
@@ -99,6 +104,7 @@ static void print_help(char *name)
     fprintf(stdout, "    [--remote-port <port>]              The server port, default as 61440.\n");
     fprintf(stdout, "    [--keep-alive1-flag <flag>]         The keep alive 1 packet's flag.\n"
                     "                                            default as 00.\n");
+    fprintf(stdout, "    [--enable-crypt]                    Enable crypt of keep alive1 packet2\n");
     fprintf(stdout, "    [-c, --config-file <file>]          The path to config file.\n");
     fprintf(stdout, "    [-h, --help]                        Print this message.\n");
 }

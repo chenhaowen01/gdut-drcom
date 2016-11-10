@@ -392,7 +392,10 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     index += 4;
     memcpy(buf+index, seed, 4);
     index += 4;
-    /**/
+
+    if (drcom_config.enable_crypt == 0)
+    {
+    /*disable crypt*/
     int32_t temp_num;
     temp_num = htole32(20000711);
     memcpy(buf+index, (uint8_t*)&temp_num, 4);
@@ -406,9 +409,11 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     index += 4;
     memcpy(buf+index, "\x00\x00\x00\x00", 4);
     index += 4;
-    /**/
-
-    /*
+    /*disable crypt*/
+    }
+    else
+    {
+    /*enable crypt*/
     uint8_t checksum[8] = {0};
     gen_ka1_checksum(checksum, seed, check_mode);
 #ifdef DEBUG
@@ -418,7 +423,8 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
 #endif
     memcpy(buf+index, checksum, 8);
     index += 8;
-    */
+    /*enable crypt*/
+    }
 
     memset(buf+index, 0x00, 16*4);
 

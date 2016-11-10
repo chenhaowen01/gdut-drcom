@@ -5,6 +5,7 @@ struct config_s {
     char remote_ip[20];
     int remote_port;
     unsigned char keep_alive1_flag;
+    int enable_crypt;
 };
 
 extern struct config_s drcom_config;

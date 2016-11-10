@@ -42,6 +42,7 @@ macaddr.datatype="macaddr"
 remote_ip = s:option(Value, "remote_ip", translate("Remote ip"))
 remote_ip.datatype="ipaddr"
 keep_alive_flag = s:option(Value, "keep_alive1_flag", translate("Keep alive1 flag"))
+enable_crypt = s:option(Flag, "enable_crypt", translate("Enable crypt"))
 
 local apply = luci.http.formvalue("cbi.apply")
 if apply then

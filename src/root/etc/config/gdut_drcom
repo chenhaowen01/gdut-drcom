@@ -3,4 +3,5 @@ config gdut_drcom
     option remote_ip '10.0.3.2'
     option keep_alive1_flag '2a'
     option enable '1'
+    option enable_crypt '0'
 

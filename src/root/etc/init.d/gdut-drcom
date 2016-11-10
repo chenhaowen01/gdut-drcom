@@ -7,11 +7,12 @@ start() {
 	keep_alive1_flag=$(uci get gdut_drcom.@gdut_drcom[0].keep_alive1_flag 2>/dev/null)
 	enable=$(uci get gdut_drcom.@gdut_drcom[0].enable 2>/dev/null)
 
-	enable_dial=$(uci get gdut_drcom.@gdut_drcom[0].enable_dial 2>/dev/null)
-	ifname=$(uci get gdut_drcom.@gdut_drcom[0].ifname 2>/dev/null)
-	username=$(uci get gdut_drcom.@gdut_drcom[0].username 2>/dev/null)
-	password=$(uci get gdut_drcom.@gdut_drcom[0].password 2>/dev/null)
+#	enable_dial=$(uci get gdut_drcom.@gdut_drcom[0].enable_dial 2>/dev/null)
+#	ifname=$(uci get gdut_drcom.@gdut_drcom[0].ifname 2>/dev/null)
+#	username=$(uci get gdut_drcom.@gdut_drcom[0].username 2>/dev/null)
+#	password=$(uci get gdut_drcom.@gdut_drcom[0].password 2>/dev/null)
 	macaddr=$(uci get gdut_drcom.@gdut_drcom[0].macaddr 2>/dev/null)
+	enable_crypt=$(uci get gdut_drcom.@gdut_drcom[0].enable_crypt 2>/dev/null)
 	
 
 	if [ "$enable"x = "1"x ]; then
@@ -45,6 +46,9 @@ start() {
 	if [ -n "$keep_alive1_flag" ]; then
 		cmd=$cmd"--keep-alive1-flag=$keep_alive1_flag "
 	fi
+	if [ "$enable_crypt"x = "1"x ]; then
+        cmd=$cmd"--enable-crypt "
+    fi
 	cmd=$cmd"1> /tmp/gdut-drcom.log 2>/tmp/gdut-drcom_error.log &"
 
 	eval $cmd

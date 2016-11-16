@@ -5,7 +5,7 @@
          \_, /\_,_/\_,_/\__/    \_,_/_/  \__/\___/_/_/_/
         /___/    A third-party drcom client for gdut.
         
-这是一个适用于广东工业大学的第三方 drcom 客户端（drcom 5.2.1p），支持 Linux （包括OpenWrt等用于路由器的发行版）与Windows。
+这是一个适用于广东工业大学的第三方 drcom 客户端（drcom 5.2.1p），支持 Linux （包括OpenWrt等用于路由器的发行版）与Windows。从1.6版本之后添加了切换校验加密的选项 --enable-crypt，现在按理来说应该也是支持其他学校的5.2.1p版的drcom客户，如果有其他学校的同学想要试用或者移植到你们学校，请联系我（chenhaowen01@qq.com）。
 # install
 * OpenWrt
   * 使用 opkg（推荐）
@@ -47,13 +47,14 @@ cd gdut-drcom\src
 mingw32-make CC=gcc
 ```
 # usage
-```bash
+```
 gdut-drcom
     --remote-ip <ip addr>               The server ip.
 
     [--remote-port <port>]              The server port, default as 61440.
     [--keep-alive1-flag <flag>]         The keep alive 1 packet's flag.
                                             default as 00.
+    [--enable-crypt]                    Enable crypt of keep alive1 packet2.
     [-c, --config-file <file>]          The path to config file.
     [-h, --help]                        Print this message.
 ```

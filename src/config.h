@@ -1,6 +1,12 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+enum CRYPT_TYPE {
+    DISABLE_CRYPT=0,
+    ENABLE_CRYPT=1,
+    AUTO_CRYPT=2
+};
+
 struct config_s {
     char remote_ip[20];
     int remote_port;

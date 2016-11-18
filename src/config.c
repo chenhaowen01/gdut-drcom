@@ -90,6 +90,17 @@ static int parse_line(char *buf, int size)
     {
         sscanf(opt.value, "%02hhx", &drcom_config.keep_alive1_flag);
     }
+    else if (strcmp(opt.key, "enable_crypt") == 0)
+    {
+        if (strcmp(opt.value, "1") == 0)
+        {
+            drcom_config.enable_crypt = 1;
+        }
+        else if (strcmp(opt.value, "0") == 0)
+        {
+            drcom_config.enable_crypt = 0;
+        }
+    }
 /*    else if(strcmp(opt.key, "keep_alive2_flag") == 0)
     {
         sscanf(opt.value, "%02hhx", &drcom_config.keep_alive2_flag);

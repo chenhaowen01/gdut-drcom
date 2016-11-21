@@ -21,6 +21,24 @@ static int parse_line(char *buf, int size);
 static void strstrip(char *s, char *chars);
 /* locale functions */
 
+void set_remote_ip(char* ip, int len)
+{
+    memcpy(drcom_config.remote_ip, ip, len);
+    printf("set remote_ip = %s\n", drcom_config.remote_ip);
+}
+
+void set_keep_alive1_flag(char* flag, int len)
+{
+    sscanf(flag, "%02hhx", &drcom_config.keep_alive1_flag);
+    printf("set keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
+}
+
+void set_enable_crypt(int enable)
+{
+    drcom_config.enable_crypt = enable;
+    printf("set enable_crypt = %d\n", enable);
+}
+
 int parse_config(char *conf_file_name)
 {
 //    char conf_file_name[256] = "/etc/gdut-drcom.conf";

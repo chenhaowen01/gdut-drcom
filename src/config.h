@@ -17,5 +17,8 @@ struct config_s {
 extern struct config_s drcom_config;
 
 int parse_config(char * conf_file_name);
+void set_remote_ip(char *ip, int len);
+void set_keep_alive1_flag(char *flag, int len);
+void set_enable_crypt(int enable);
 
 #endif //__CONFIG_H__

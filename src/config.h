@@ -20,5 +20,6 @@ int parse_config(char * conf_file_name);
 void set_remote_ip(char *ip, int len);
 void set_keep_alive1_flag(char *flag, int len);
 void set_enable_crypt(int enable);
+void get_version(char * version);
 
 #endif //__CONFIG_H__

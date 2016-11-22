@@ -39,6 +39,11 @@ void set_enable_crypt(int enable)
     printf("set enable_crypt = %d\n", enable);
 }
 
+void get_version(char* version)
+{
+    memcpy(version, VERSION, strlen(VERSION));
+}
+
 int parse_config(char *conf_file_name)
 {
 //    char conf_file_name[256] = "/etc/gdut-drcom.conf";

@@ -5,7 +5,11 @@
          \_, /\_,_/\_,_/\__/    \_,_/_/  \__/\___/_/_/_/
         /___/    A third-party drcom client for gdut.
         
-本项目旨在为第三方 drcom 客户端提供一个心跳服务，提供一个命令行工具（gdut-drcom），以及一个动态库（gdut-drcom.dll, gdut-drcom.so）供上层程序调用，支持 Linux 与 Windows(mingw64) 平台。
+本项目旨在为第三方 drcom 客户端提供一个心跳服务。包括一个命令行工具（gdut-drcom），以及一个动态库（gdut-drcom.dll, gdut-drcom.so）供上层程序调用，支持 Linux 与 Windows(mingw64) 平台。
+
+使用本项目的第三方drcom客户端：
+1. [gdut-drcom-for-openwrt][4];
+2. [Drcom-Dialer][5].
 
 目前仅测试过，适用于广东工业大学的drcom客户端（drcom 5.2.1p），理论上也支持其他学校的drcom客户端，请自测。如有需要移植到其他学校，请联系我（chenhaowen01@qq.com）。
 
@@ -102,3 +106,5 @@ int auth(void);
 [1]: https://github.com/drcoms/drcom-generic
 [2]: https://github.com/drcoms/drcom-generic/issues/82
 [3]: https://sourceforge.net/projects/mingw-w64/
+[4]: https://github.com/chenhaowen01/gdut-drcom-for-openwrt
+[5]: https://github.com/GDUT-Drcom/Drcom-Dialer

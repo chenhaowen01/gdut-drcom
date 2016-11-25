@@ -5,46 +5,38 @@
          \_, /\_,_/\_,_/\__/    \_,_/_/  \__/\___/_/_/_/
         /___/    A third-party drcom client for gdut.
         
-这是一个适用于广东工业大学的第三方 drcom 客户端（drcom 5.2.1p），支持 Linux （包括OpenWrt等用于路由器的发行版）与Windows。从1.6版本之后添加了切换校验加密的选项 --enable-crypt，现在按理来说应该也是支持其他学校的5.2.1p版的drcom客户，如果有其他学校的同学想要试用或者移植到你们学校，请联系我（chenhaowen01@qq.com）。
-# install
-* OpenWrt
-  * 使用 opkg（推荐）
-  ```bash
-  opkg install gdut-drcom_xxx.ipk
-  ```
-  * 手动安装（仅在 opkg 安装失败时使用）
-  ```bash
-  tar xvf gdut-drcom_xxx.tar -C /tmp
-  cd /tmp/gdut-drocm
-  sh install.sh
-  ```
+本项目旨在为第三方 drcom 客户端提供一个心跳服务，提供一个命令行工具（gdut-drcom），以及一个动态库（gdut-drcom.dll, gdut-drcom.so）供上层程序调用，支持 Linux 与 Windows(mingw64) 平台。
+
+目前仅测试过，适用于广东工业大学的drcom客户端（drcom 5.2.1p），理论上也支持其他学校的drcom客户端，请自测。如有需要移植到其他学校，请联系我（chenhaowen01@qq.com）。
 
 # compile
-* 使用 OpenWrt SDK（以rampis平台为例）
-```bash
-tar xvjf OpenWrt-SDK-15.05-ramips-rt305x_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
-cd OpenWrt-SDK-15.05-ramips-rt305x_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64
-git clone https://github.com/chenhaowen01/gdut-drcom.git
-make package/gdut-drcom/compile
-```
 * Linux
 ```bash
 git clone https://github.com/chenhaowen01/gdut-drcom.git
 cd gdut-drcom/src
+
+# 编译命令行工具
 # 可通过cryptlib变量指定加密库，留空表示不使用第三方库
 # cryptlib=[openssl, polarssl, gcrypt]
 # 如
 make cryptlib=openssl
+
+# 编译动态链接库
+make dll
 ```
 
 * Windows（[mingw-w64][3]）
-```bat
+```
 git clone https://github.com/chenhaowen01/gdut-drcom.git
 cd gdut-drcom\src
+
 # 可通过cryptlib变量指定加密库，留空表示不使用第三方库
 # cryptlib=[openssl, polarssl, gcrypt]
 # 如
 mingw32-make CC=gcc
+
+# 编译动态链接库
+make dll CC=gcc
 ```
 # usage
 ```
@@ -57,6 +49,7 @@ gdut-drcom
     [--enable-crypt]                    Enable crypt of keep alive1 packet2.
     [-c, --config-file <file>]          The path to config file.
     [-h, --help]                        Print this message.
+    [-v, --version]                     Print version infomatuon
 ```
 
 # reference

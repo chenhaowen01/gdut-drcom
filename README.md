@@ -84,6 +84,13 @@ void set_enable_crypt(int enable);
  * 函数功能：用于获取当前使用的动态链接库的版本号，如"1.6.0"
  */
 void get_version(char * version); 
+
+/* 函数名称：auth
+ * 参数表：  无
+ * 返回值：  无
+ * 函数功能：用于启动心跳服务
+ */
+int auth(void);
 ```
 
 # reference

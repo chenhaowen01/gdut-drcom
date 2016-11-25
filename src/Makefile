@@ -1,5 +1,6 @@
 #CC:=gcc
-CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=\"1.6-0\"
+VERSION:=1.6.0
+CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=\"$(VERSION)\"
 
 objects= config.o auth.o
 
@@ -31,6 +32,12 @@ gdut-drcom: $(objects) gdut-drcom.o
 
 dll: $(objects)
 	$(CC) -shared $(objects) -o $(DLLNAME) $(CFLAGS) $(LIBS)
+
+tarball: *.c *.h
+	mkdir ../gdut-drcom
+	cp -r * ../gdut-drcom
+	tar cvjf ../release/gdut-drcom-$(VERSION).tar.bz2 * -C ../gdut-drcom
+	rm -r ../gdut-drcom
 
 gdut-drcom.o: gdut-drcom.c
 	$(CC) $(CFLAGS) -c $<

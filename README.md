@@ -53,6 +53,7 @@ gdut-drcom
     [-v, --version]                     Print version infomatuon
 ```
 * 动态链接库
+
 gdut-drcom 动态链接库提供如下接口，供上层应用程序配置与启动心跳服务：
 ```c
 /* 函数名称：set_remote_ip

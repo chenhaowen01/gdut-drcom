@@ -29,13 +29,14 @@ int main(int argc, char *argv[])
         {
             {"help",                no_argument,        0,  'h'},
             {"config-file",         required_argument,  0,  'c'},
+            {"version",             no_argument,        0,  'v'},
             {"remote-ip",           required_argument,  0,  0},
             {"remote-port",         required_argument,  0,  1},
             {"keep-alive1-flag",    required_argument,  0,  2},
             {"enable-crypt",        no_argument,        0,  3},
             {0,             0,                  0,  0},
         };
-        opt = getopt_long(argc, argv, "hc:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "hc:v", long_options, &option_index);
         if (opt == -1)
         {
             break;
@@ -60,6 +61,10 @@ int main(int argc, char *argv[])
                 break;
             case 'h':
                 print_help(argv[0]);
+                exit(0);
+                break;
+            case 'v':
+                fprintf(stdout, "version: %s\n", VERSION);
                 exit(0);
                 break;
             case '?':

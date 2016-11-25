@@ -8,8 +8,8 @@
 本项目旨在为第三方 drcom 客户端提供一个心跳服务。包括一个命令行工具（gdut-drcom），以及一个动态库（gdut-drcom.dll, gdut-drcom.so）供上层程序调用，支持 Linux 与 Windows(mingw64) 平台。
 
 使用本项目的第三方drcom客户端：
-1. [gdut-drcom-for-openwrt][4];
-2. [Drcom-Dialer][5].
+* 路由器上的drcom客户端: [gdut-drcom-for-openwrt][4];
+* Windows上的drcom客户端: [Drcom-Dialer][5].
 
 目前仅测试过，适用于广东工业大学的drcom客户端（drcom 5.2.1p），理论上也支持其他学校的drcom客户端，请自测。如有需要移植到其他学校，请联系我（chenhaowen01@qq.com）。
 

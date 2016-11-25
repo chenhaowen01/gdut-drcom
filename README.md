@@ -39,6 +39,7 @@ mingw32-make CC=gcc
 make dll CC=gcc
 ```
 # usage
+* 命令行工具
 ```
 gdut-drcom
     --remote-ip <ip addr>               The server ip.
@@ -50,6 +51,39 @@ gdut-drcom
     [-c, --config-file <file>]          The path to config file.
     [-h, --help]                        Print this message.
     [-v, --version]                     Print version infomatuon
+```
+* 动态链接库
+gdut-drcom 动态链接库提供如下接口，供上层应用程序配置与启动心跳服务：
+```c
+/* 函数名称：set_remote_ip
+ * 参数表：  char *ip    远程认证服务器ip
+ *          int len     上一个参数的长度
+ * 返回值：  无
+ * 函数功能：用于配置认证服务器的ip地址
+ */
+void set_remote_ip(char *ip, int len);
+
+/* 函数名称：set_keep_alive1_flag
+ * 参数表：  char *flag  数据包标志，两个字节大小
+ *          int len     上一个参数的长度
+ * 返回值：  无
+ * 函数功能：用于配置第一组数据包的标志位，不设置则默认为00
+ */
+void set_keep_alive1_flag(char *flag, int len);
+
+/* 函数名称：set_enable_crypt
+ * 参数表：  int enable 0为禁用加密校验，1为启用加密校验
+ * 返回值：  无
+ * 函数功能：用于配置第一组数据包的校验是否使用加密校验，不配置则默认为不加密
+ */
+void set_enable_crypt(int enable);
+
+/* 函数名称：get_version
+ * 参数表：  char *version 用于存储返回的版本号，请确保该字符数组不会越界
+ * 返回值：  无
+ * 函数功能：用于获取当前使用的动态链接库的版本号，如"1.6.0"
+ */
+void get_version(char * version); 
 ```
 
 # reference

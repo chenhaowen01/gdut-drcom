@@ -22,9 +22,9 @@ endif
 
 ifeq ($(LANG),)
 LIBS+= -lws2_32
-DLLNAME=gdut-drcom.dll
+DLLNAME=gdut-drcom.dll.$(VERSION)
 else
-DLLNAME=gdut-drcom.so
+DLLNAME=gdut-drcom.so.$(VERSION)
 endif
 
 gdut-drcom: $(objects) gdut-drcom.o

@@ -51,7 +51,7 @@ md5.o md4.o sha1.o:
 .PHONY : clean
 clean:
 ifeq ($(LANG),)
-	del gdut-drcom.exe *.o *.dll
+	del gdut-drcom.exe *.o *.dll.$(VERSION)
 else
-	$(RM) gdut-drcom *.o *.so
+	$(RM) gdut-drcom *.o *.so.$(VERSION)
 endif

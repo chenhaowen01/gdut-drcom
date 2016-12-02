@@ -44,6 +44,15 @@ void get_version(char* version)
     memcpy(version, VERSION, strlen(VERSION));
 }
 
+void set_log_file(char * log_file, int len)
+{
+    FILE * logp = fopen(log_file, "w");
+    if (logp)
+    {
+        drcom_config.log_file = logp;
+    }
+}
+
 int parse_config(char *conf_file_name)
 {
 //    char conf_file_name[256] = "/etc/gdut-drcom.conf";

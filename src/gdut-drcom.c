@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
 {
     char conf_file_name[256] = {0};
 
+    drcom_config.log_file = stdout;
+
     if (argc == 1)
     {
         print_help(argv[0]);
@@ -30,6 +32,7 @@ int main(int argc, char *argv[])
             {"help",                no_argument,        0,  'h'},
             {"config-file",         required_argument,  0,  'c'},
             {"version",             no_argument,        0,  'v'},
+            {"log-file",            required_argument,  0,  'l'},
             {"remote-ip",           required_argument,  0,  0},
             {"remote-port",         required_argument,  0,  1},
             {"keep-alive1-flag",    required_argument,  0,  2},
@@ -67,6 +70,9 @@ int main(int argc, char *argv[])
                 fprintf(stdout, "version: %s\n", VERSION);
                 exit(0);
                 break;
+            case 'l':
+                set_log_file(optarg, strlen(optarg));
+                break;
             case '?':
                 break;
             default:
@@ -78,11 +84,11 @@ int main(int argc, char *argv[])
 //        parse_config(conf_file_name);
 //    }
 #ifdef DEBUG
-    fprintf(stdout, "drcom_config.remote_ip = %s\n", drcom_config.remote_ip);
-    fprintf(stdout, "drcom_config.remote_port = %d\n", drcom_config.remote_port);
-    fprintf(stdout, "drcom_config.keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
-    fprintf(stdout, "drcom_config.enable_crypt = %d\n", drcom_config.enable_crypt);
-    fflush(stdout);
+    fprintf(drcom_config.log_file, "drcom_config.remote_ip = %s\n", drcom_config.remote_ip);
+    fprintf(drcom_config.log_file, "drcom_config.remote_port = %d\n", drcom_config.remote_port);
+    fprintf(drcom_config.log_file, "drcom_config.keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
+    fprintf(drcom_config.log_file, "drcom_config.enable_crypt = %d\n", drcom_config.enable_crypt);
+    fflush(drcom_config.log_file);
 #endif
 
     auth();

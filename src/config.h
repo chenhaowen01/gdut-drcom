@@ -1,6 +1,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#include <stdio.h>
+
 enum CRYPT_TYPE {
     DISABLE_CRYPT=0,
     ENABLE_CRYPT=1,
@@ -12,6 +14,7 @@ struct config_s {
     int remote_port;
     unsigned char keep_alive1_flag;
     int enable_crypt;
+    FILE * log_file;
 };
 
 extern struct config_s drcom_config;
@@ -21,5 +24,6 @@ void set_remote_ip(char *ip, int len);
 void set_keep_alive1_flag(char *flag, int len);
 void set_enable_crypt(int enable);
 void get_version(char * version);
+void set_log_file(char * log_file, int len);
 
 #endif //__CONFIG_H__

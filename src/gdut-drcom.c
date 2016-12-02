@@ -117,6 +117,7 @@ static void print_help(char *name)
                     "                                            default as 00.\n");
     fprintf(stdout, "    [--enable-crypt]                    Enable crypt of keep alive1 packet2\n");
     fprintf(stdout, "    [-c, --config-file <file>]          The path to config file.\n");
+    fprintf(stdout, "    [-l, --log-file <file>]             The path to log file, default as stdout.\n");
     fprintf(stdout, "    [-h, --help]                        Print this message.\n");
 }
 

@@ -42,7 +42,7 @@ void set_enable_crypt(int enable)
 
 void get_version(char* version)
 {
-    memcpy(version, VERSION, strlen(VERSION));
+    strcpy(version, VERSION);
 }
 
 void set_log_file(char * log_file, int len)

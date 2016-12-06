@@ -13,6 +13,7 @@ struct option_s {
 /* extern variables */
 struct config_s drcom_config = {
     .remote_port = 61440,
+    .exit = 0,
 };
 /* extern variables */
 

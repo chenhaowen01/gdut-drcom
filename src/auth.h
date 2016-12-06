@@ -2,5 +2,6 @@
 #define __AUTH_H__
 
 int auth(void);
+int exit_auth(void);
 
 #endif  //__AUTH_H__

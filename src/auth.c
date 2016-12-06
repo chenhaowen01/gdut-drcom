@@ -73,6 +73,10 @@ static void print_as_hex(uint8_t *buf, int len);
 
 int auth(void)
 {
+    if (!drcom_config.log_file)
+    {
+        drcom_config.log_file = stdout;
+    }
 #ifdef WIN32
     WORD sockVersion = MAKEWORD(2,2);
     WSADATA wsaData;
@@ -150,7 +154,7 @@ HEART_BEAT_START:
     kp1_cnt = 1;
     kp2_cnt = 0;
     srand((unsigned int)time(NULL));
-    while (1)
+    while ( !drcom_config.exit )
     {
         retry_cnt = 1;
         while (1)
@@ -314,6 +318,12 @@ HEART_BEAT_START:
 
     close(client_sockfd);
 #endif
+    return 0;
+}
+
+int exit_auth(void)
+{
+    drcom_config.exit = 1;
     return 0;
 }
 

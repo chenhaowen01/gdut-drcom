@@ -15,6 +15,7 @@ struct config_s {
     unsigned char keep_alive1_flag;
     int enable_crypt;
     FILE * log_file;
+    int exit;
 };
 
 extern struct config_s drcom_config;

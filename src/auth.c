@@ -232,7 +232,13 @@ HEART_BEAT_START:
         rand_num[0] = rand_tmp / 0x100;
         rand_num[1] = rand_tmp % 0x100;
 
-        sleep(3);
+        int i;
+        for (i=0; i<3; i++)
+        {
+            if (drcom_config.exit)
+                return 0;
+            sleep(1);
+        }
         while (1)
         {
             length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key);
@@ -309,7 +315,12 @@ HEART_BEAT_START:
         kp2_cnt++;
 
 
-        sleep(17);
+        for (i=0; i<17; i++)
+        {
+            if (drcom_config.exit)
+                return 0;
+            sleep(1);
+        }
     }
 #ifdef WIN32
     closesocket(client_sockfd);
@@ -323,6 +334,7 @@ HEART_BEAT_START:
 
 int exit_auth(void)
 {
+    fprintf(drcom_config.log_file, "gdut-drcom heart-beat exiting!\r\n");
     drcom_config.exit = 1;
     return 0;
 }

@@ -1,5 +1,5 @@
 #CC:=gcc
-VERSION:=1.6.4
+VERSION:=1.6.5
 CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=\"$(VERSION)\"
 
 objects= config.o auth.o

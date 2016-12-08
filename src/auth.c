@@ -68,6 +68,7 @@ static void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum);
 
 static uint32_t drcomCRC32(uint8_t *data, int len);
 static void print_as_hex(uint8_t *buf, int len);
+static void short_wait_sleep(int second);
 /****local functions****/
 
 
@@ -232,7 +233,7 @@ HEART_BEAT_START:
         rand_num[0] = rand_tmp / 0x100;
         rand_num[1] = rand_tmp % 0x100;
 
-        sleep(3);
+        short_wait_sleep(3);
         while (1)
         {
             length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key);
@@ -309,7 +310,7 @@ HEART_BEAT_START:
         kp2_cnt++;
 
 
-        sleep(17);
+        short_wait_sleep(17);
     }
 #ifdef WIN32
     closesocket(client_sockfd);
@@ -583,3 +584,7 @@ void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum)
     memcpy(checksum, (uint8_t*)&checksum_tmp, 4);
 }
 
+static void short_wait_sleep(int second){
+    for(int i = second; i > 0 && !drcom_config.exit; i--)
+        sleep(1);
+}

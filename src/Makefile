@@ -33,10 +33,6 @@ gdut-drcom: $(objects) gdut-drcom.o
 dll: $(objects)
 	$(CC) -shared $(objects) -o $(DLLNAME) $(CFLAGS) $(LIBS)
 
-tarball: *.c *.h
-	tar cjf ../release/gdut-drcom-$(VERSION).tar.bz2 -C ../.. gdut-drcom --exclude=gdut-drcom/release --exclude=gdut-drcom/.git
-	md5sum ../release/gdut-drcom-$(VERSION).tar.bz2
-
 gdut-drcom.o: gdut-drcom.c
 	$(CC) $(CFLAGS) -c $<
 

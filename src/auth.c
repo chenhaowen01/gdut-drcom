@@ -233,10 +233,7 @@ HEART_BEAT_START:
         rand_num[0] = rand_tmp / 0x100;
         rand_num[1] = rand_tmp % 0x100;
 
-<<<<<<< HEAD
-=======
         short_wait_sleep(3);
->>>>>>> master
         while (1)
         {
             length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key);
@@ -312,11 +309,7 @@ HEART_BEAT_START:
         print_as_hex(pkt_data,length);
         kp2_cnt++;
 
-
-<<<<<<< HEAD
-=======
         short_wait_sleep(17);
->>>>>>> master
     }
 #ifdef WIN32
     closesocket(client_sockfd);

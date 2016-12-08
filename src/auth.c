@@ -585,6 +585,7 @@ void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum)
 }
 
 static void short_wait_sleep(int second){
-    for(int i = second; i > 0 && !drcom_config.exit; i--)
+    int i;
+    for(i = second; i > 0 && !drcom_config.exit; i--)
         sleep(1);
 }

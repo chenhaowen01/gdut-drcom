@@ -324,6 +324,7 @@ HEART_BEAT_START:
 int exit_auth(void)
 {
     fprintf(drcom_config.log_file, "gdut-drcom heart-beat exiting!\r\n");
+    fclose(drcom_config.log_file);
     drcom_config.exit = 1;
     return 0;
 }

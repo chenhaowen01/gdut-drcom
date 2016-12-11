@@ -119,5 +119,6 @@ static void print_help(char *name)
     fprintf(stdout, "    [-c, --config-file <file>]          The path to config file.\n");
     fprintf(stdout, "    [-l, --log-file <file>]             The path to log file, default as stdout.\n");
     fprintf(stdout, "    [-h, --help]                        Print this message.\n");
+    fprintf(stdout, "    [-v, --version]                     Print version infomatuon..\n");
 }
 

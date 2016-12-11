@@ -1,5 +1,5 @@
 #CC:=gcc
-VERSION:=1.6.5
+VERSION:=1.6.6
 CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=\"$(VERSION)\"
 
 objects= config.o auth.o
@@ -22,6 +22,7 @@ endif
 
 ifeq ($(LANG),)
 LIBS+= -lws2_32
+#CFLAGS+=-m32
 DLLNAME=gdut-drcom.dll.$(VERSION)
 else
 DLLNAME=gdut-drcom.so.$(VERSION)

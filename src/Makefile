@@ -1,5 +1,6 @@
 #CC:=gcc
 VERSION:=1.6.7
+NAME=gdut-drcom
 
 CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=$(VERSION)
 
@@ -10,12 +11,13 @@ ifeq ($(OS), Windows_NT)
 # windows
 LIBS+= -lws2_32
 CFLAGS+= -DWIN32
-#CFLAGS+=-m32
-DLLNAME=gdut-drcom.dll.$(VERSION)
+DLLNAME=$(NAME).dll.$(VERSION)
+BINNAME=$(NAME).exe
 RM=del
 else
 # unix like
-DLLNAME=gdut-drcom.so.$(VERSION)
+DLLNAME=$(NAME).so.$(VERSION)
+BINNAME=$(NAME)
 RM=rm -f
 endif
 
@@ -34,14 +36,14 @@ else
 objects+= md5.o md4.o sha1.o
 endif
 
-all: gdut-drcom 
-	@echo gdut-drcom
+all: $(BINNAME)
+	@echo $(BINNAME)
 
-gdut-drcom: $(objects) gdut-drcom.o
-	$(CC) *.o -o gdut-drcom $(CFLAGS) $(LIBS)
+$(BINNAME): $(objects) gdut-drcom.o
+	$(CC) *.o -o $(BINNAME) $(CFLAGS) $(LIBS)
 
 dll: $(objects)
-	@echo gdut-drcom shared library
+	@echo $(NAME) shared library
 	$(CC) -shared $(objects) -o $(DLLNAME) $(CFLAGS) $(LIBS)
 
 gdut-drcom.o: gdut-drcom.c
@@ -57,4 +59,4 @@ md5.o md4.o sha1.o:
 
 .PHONY : clean
 clean:
-	$(RM) gdut-drcom $(DLLNAME) *.o 
+	$(RM) $(BINNAME) $(DLLNAME) *.o 

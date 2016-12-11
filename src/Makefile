@@ -2,7 +2,7 @@
 VERSION:=1.6.7
 NAME=gdut-drcom
 
-CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=$(VERSION)
+CFLAGS+= -Wall -O3 -fPIC -DDEBUG -DVERSION=$(VERSION)
 
 objects= config.o auth.o
 
@@ -38,13 +38,11 @@ objects+= md5.o md4.o sha1.o
 endif
 
 all: $(BINNAME)
-	@echo $(BINNAME)
 
 $(BINNAME): $(objects) gdut-drcom.o
 	$(CC) *.o -o $(BINNAME) $(CFLAGS) $(LIBS)
 
 dll: $(objects)
-	@echo $(NAME) shared library
 	$(CC) -shared $(objects) -o $(DLLNAME) $(CFLAGS) $(LIBS)
 
 gdut-drcom.o: gdut-drcom.c

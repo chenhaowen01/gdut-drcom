@@ -9,6 +9,7 @@ objects= config.o auth.o
 # detect OS
 ifeq ($(OS), Windows_NT)
 # windows
+CC=gcc
 LIBS+= -lws2_32
 CFLAGS+= -DWIN32
 DLLNAME=$(NAME).dll.$(VERSION)

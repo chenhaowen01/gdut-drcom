@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#ifndef VERSION
+    #define VERSION 0.0.0
+#endif
+
 struct option_s {
     char key[256];
     char value[256];
@@ -42,7 +46,7 @@ void set_enable_crypt(int enable)
 
 void get_version(char* version)
 {
-    strcpy(version, VERSION);
+    strcpy(version, "VERSION");
 }
 
 void set_log_file(char * log_file, int len)

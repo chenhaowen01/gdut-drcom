@@ -1,7 +1,7 @@
 #CC:=gcc
 VERSION:=1.6.7
 
-CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=\"$(VERSION)\"
+CFLAGS+= -Wall -fPIC -DDEBUG -DVERSION=$(VERSION)
 
 objects= config.o auth.o
 

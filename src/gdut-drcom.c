@@ -5,10 +5,6 @@
 #include "auth.h"
 #include "config.h"
 
-#ifndef VERSION
-    #define VERSION 0.0.0
-#endif
-
 static void print_help(char * name);
 
 int main(int argc, char *argv[])
@@ -67,7 +63,7 @@ int main(int argc, char *argv[])
                 exit(0);
                 break;
             case 'v':
-                fprintf(stdout, "version: %s\n", "VERSION");
+                fprintf(stdout, "version: %s\n", _VERSION);
                 exit(0);
                 break;
             case 'l':
@@ -107,7 +103,7 @@ static void print_help(char *name)
         "        /___/   "
             );
 
-    fprintf(stdout, "A third-party drcom client for gdut. version %s\n", "VERSION");
+    fprintf(stdout, "A third-party drcom client for gdut. version %s\n", _VERSION);
     fprintf(stdout, "usage:\n");
     fprintf(stdout, "  %s\n", name);
     fprintf(stdout, "    --remote-ip <ip addr>               The server ip.\n");

@@ -3,6 +3,14 @@
 
 #include <stdio.h>
 
+#ifndef VERSION
+    #define VERSION 0.0.0
+#endif
+
+#define _VERSION __VERSION(VERSION)
+#define __VERSION(str) ___VERSION(str)
+#define ___VERSION(str) #str
+
 enum CRYPT_TYPE {
     DISABLE_CRYPT=0,
     ENABLE_CRYPT=1,

@@ -51,7 +51,7 @@ void get_version(char* version)
 
 void set_log_file(char * log_file, int len)
 {
-    FILE * logp = fopen(log_file, "w");
+    FILE * logp = fopen(log_file, "a");
     if (logp)
     {
         drcom_config.log_file = logp;

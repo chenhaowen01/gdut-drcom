@@ -318,6 +318,7 @@ HEART_BEAT_START:
 
     close(client_sockfd);
 #endif
+    drcom_config.exit = 0;
     return 0;
 }
 

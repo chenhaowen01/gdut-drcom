@@ -28,7 +28,6 @@ void Logger_free(Logger *l)
 
 void log_add(Logger *l, int level, const char *msg)
 {
-    static fpos_t pos;
     if (level < l->level) return;
 
     time_t meow = time(NULL);
@@ -36,8 +35,7 @@ void log_add(Logger *l, int level, const char *msg)
 
     strftime(buf, sizeof(buf), l->datetime_format, localtime(&meow));
 
-    fgetpos(l->fp, &pos);
-    if (pos.__pos > LOGFILE_MAXSIZE)
+    if (ftell(l->fp) > LOGFILE_MAXSIZE)
     {
         rewind(l->fp);
     }

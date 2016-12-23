@@ -1,5 +1,5 @@
 #CC:=gcc
-VERSION:=1.6.7
+VERSION:=1.6.8
 NAME=gdut-drcom
 
 CFLAGS+= -Wall -O3 -fPIC -DDEBUG -DVERSION=$(VERSION)

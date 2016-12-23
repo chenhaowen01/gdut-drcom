@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include "auth.h"
 #include "config.h"
+#include "logger.h"
 
 static void print_help(char * name);
 
@@ -12,6 +13,8 @@ int main(int argc, char *argv[])
     char conf_file_name[256] = {0};
 
     drcom_config.log_file = stdout;
+    logger = Logger_create();
+    logger->level = LOG_DEBUG;
 
     if (argc == 1)
     {
@@ -80,10 +83,6 @@ int main(int argc, char *argv[])
 //        parse_config(conf_file_name);
 //    }
 #ifdef DEBUG
-    fprintf(drcom_config.log_file, "drcom_config.remote_ip = %s\n", drcom_config.remote_ip);
-    fprintf(drcom_config.log_file, "drcom_config.remote_port = %d\n", drcom_config.remote_port);
-    fprintf(drcom_config.log_file, "drcom_config.keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
-    fprintf(drcom_config.log_file, "drcom_config.enable_crypt = %d\n", drcom_config.enable_crypt);
     fflush(drcom_config.log_file);
 #endif
 

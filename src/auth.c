@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <time.h>
+#include "logger.h"
 
 #ifdef WIN32
     #include <winsock2.h>
@@ -53,6 +54,7 @@
 #endif
 
 #include "config.h"
+
 /****local functions****/
 static int make_keep_alive1_pkt1(uint8_t *buf, uint8_t cnt);
 static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
@@ -67,17 +69,28 @@ static void gen_ka1_checksum(uint8_t *checksum, uint8_t *seed, uint8_t mode);
 static void gen_ka2_checksum(uint8_t *data, int len, uint8_t *checksum);
 
 static uint32_t drcomCRC32(uint8_t *data, int len);
-static void print_as_hex(uint8_t *buf, int len);
+//static void print_as_hex(uint8_t *buf, int len);
+static void pkt_data_log(char *header, uint8_t * pkt_data, int len);
 static void short_wait_sleep(int second);
 /****local functions****/
 
 
 int auth(void)
 {
-    if (!drcom_config.log_file)
+    if (!logger)
     {
-        drcom_config.log_file = stdout;
+        logger = Logger_create();
     }
+
+    log_info(logger, "\n  drcom_config.remote_ip = %s\n"
+            "  drcom_config.remote_port = %d\n"
+            "  drcom_config.keep_alive1_flag = %02hhx\n"
+            "  drcom_config.enable_crypt = %d",
+            drcom_config.remote_ip,
+            drcom_config.remote_port,
+            drcom_config.keep_alive1_flag,
+            drcom_config.enable_crypt);
+
 #ifdef WIN32
     WORD sockVersion = MAKEWORD(2,2);
     WSADATA wsaData;
@@ -130,8 +143,7 @@ int auth(void)
     SOCKET client_sockfd;
     if ((client_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET)
     {
-        fprintf(stderr, "error!\n");
-        fflush(stderr);
+        log_error(logger, "socket open error!");
         return -1;
     }
 
@@ -150,8 +162,7 @@ int auth(void)
 
 
 HEART_BEAT_START:
-    fprintf(drcom_config.log_file, "gdut-drcom heart-beat started!\n\n");
-    fflush(drcom_config.log_file);
+    log_info(logger, "gdut-drcom heart-beat started!");
     kp1_cnt = 1;
     kp2_cnt = 0;
     srand((unsigned int)time(NULL));
@@ -163,10 +174,12 @@ HEART_BEAT_START:
             length = make_keep_alive1_pkt1(pkt_data, kp1_cnt);
             sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
-            fprintf(drcom_config.log_file, "<==[sended kap1_1 request %d] len = %d\n",\
-                    kp1_cnt, length);
-            fflush(drcom_config.log_file);
-            print_as_hex(pkt_data, length);
+//            fprintf(drcom_config.log_file, "<==[sended kap1_1 request %d] len = %d\n",\
+//                    kp1_cnt, length);
+//            fflush(drcom_config.log_file);
+//            print_as_hex(pkt_data, length);
+
+            pkt_data_log("\n  <== sended ", pkt_data, length);
 
             if (retry_cnt > 5)
             {
@@ -176,8 +189,7 @@ HEART_BEAT_START:
             if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
-                fprintf(drcom_config.log_file, "recv kap1_1 timeout, retry %d!\n", retry_cnt++);
-                fflush(drcom_config.log_file);
+                log_info(logger, "recv kap1_1 timeout, retry %d", retry_cnt++);
             }
             else
             {
@@ -185,13 +197,15 @@ HEART_BEAT_START:
             }
         }
         retry_cnt = 0;
-        fprintf(drcom_config.log_file, "==>[recieved kap1_1 response %d] len = %d\n",\
-                kp1_cnt, length);
-        fflush(drcom_config.log_file);
-        print_as_hex(pkt_data,length);
+//        fprintf(drcom_config.log_file, "==>[recieved kap1_1 response %d] len = %d\n",\
+//                kp1_cnt, length);
+//        fflush(drcom_config.log_file);
+//        print_as_hex(pkt_data,length);
+
+        pkt_data_log("\n  ==> recieved", pkt_data, length);
+
         memcpy(seed, pkt_data+8, 4);
         memcpy(host_ip, pkt_data+12, 4);
-//        memcpy(drcom_config.host_ip, pkt_data+12, 4);
         kp1_cnt++;
 
         retry_cnt = 1;
@@ -200,10 +214,11 @@ HEART_BEAT_START:
             length = make_keep_alive1_pkt2(pkt_data, seed, host_ip, kp1_cnt);
             sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
-            fprintf(drcom_config.log_file, "<==[sended kap1_2 request %d] len = %d\n",\
-                    kp1_cnt, length);
-            fflush(drcom_config.log_file);
-            print_as_hex(pkt_data, length);
+//            fprintf(drcom_config.log_file, "<==[sended kap1_2 request %d] len = %d\n",\
+//                    kp1_cnt, length);
+//            fflush(drcom_config.log_file);
+//            print_as_hex(pkt_data, length);
+            pkt_data_log("\n  <== sended", pkt_data, length);
             length = 0;
 
             if (retry_cnt > 5)
@@ -213,8 +228,7 @@ HEART_BEAT_START:
             if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0, \
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
-                fprintf(drcom_config.log_file, "recv kap1_2 timeout, retry %d!\n", retry_cnt++);
-                fflush(drcom_config.log_file);
+                log_info(logger, "recv kap1_2 timeout, retry %d!", retry_cnt++);
             }
             else
             {
@@ -222,10 +236,11 @@ HEART_BEAT_START:
             }
         }
         retry_cnt = 0;
-        fprintf(drcom_config.log_file, "==>[recieved kap1_2 response %d] len = %d\n",\
-                kp1_cnt, length);
-        fflush(drcom_config.log_file);
-        print_as_hex(pkt_data,length);
+//        fprintf(drcom_config.log_file, "==>[recieved kap1_2 response %d] len = %d\n",\
+//                kp1_cnt, length);
+//        fflush(drcom_config.log_file);
+//        print_as_hex(pkt_data,length);
+        pkt_data_log("\n  ==> recieved", pkt_data, length);
         kp1_cnt++;
 
         retry_cnt = 0;
@@ -239,10 +254,11 @@ HEART_BEAT_START:
             length = make_keep_alive2_pkt1(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key);
             sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
-            fprintf(drcom_config.log_file, "<==[sended kap2_1 request %d] len = %d\n",\
-                    kp2_cnt, length);
-            fflush(drcom_config.log_file);
-            print_as_hex(pkt_data, length);
+//            fprintf(drcom_config.log_file, "<==[sended kap2_1 request %d] len = %d\n",\
+//                    kp2_cnt, length);
+//            fflush(drcom_config.log_file);
+//            print_as_hex(pkt_data, length);
+            pkt_data_log("\n  ==> recieved", pkt_data, length);
 
             if (retry_cnt > 5)
             {
@@ -252,28 +268,29 @@ HEART_BEAT_START:
             if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
-                fprintf(drcom_config.log_file, "recv kap2_1 timeout, retry %d!\n", retry_cnt++);
-                fflush(drcom_config.log_file);
+                log_info(logger, "recv kap2_1 timeout, retry %d!", retry_cnt++);
             }
             else
             {
                 if (pkt_data[0] == 0x07 && pkt_data[2] == 0x10)
                 {
                     memcpy(ka2_flag, pkt_data+6, 2);
-                    fprintf(drcom_config.log_file, "==>[recieved kap2_1 response %d] len = %d\n",\
-                            kp2_cnt, length);
-                    fflush(drcom_config.log_file);
-                    print_as_hex(pkt_data, length);
+//                    fprintf(drcom_config.log_file, "==>[recieved kap2_1 response %d] len = %d\n",\
+//                            kp2_cnt, length);
+//                    fflush(drcom_config.log_file);
+//                    print_as_hex(pkt_data, length);
+                    pkt_data_log("\n  ==> recieved", pkt_data, length);
                     kp2_cnt++;
                     continue;
                 }
                 break;
             }
         }
-        fprintf(drcom_config.log_file, "==>[recieved kap2_1 response %d] len = %d\n",\
-                kp2_cnt, length);
-        fflush(drcom_config.log_file);
-        print_as_hex(pkt_data,length);
+//        fprintf(drcom_config.log_file, "==>[recieved kap2_1 response %d] len = %d\n",\
+//                kp2_cnt, length);
+//        fflush(drcom_config.log_file);
+//        print_as_hex(pkt_data,length);
+        pkt_data_log("\n  ==> recieved", pkt_data, length);
         memcpy(ka2_key, pkt_data+16, 4);
         kp2_cnt++;
 
@@ -282,10 +299,11 @@ HEART_BEAT_START:
             length = make_keep_alive2_pkt2(pkt_data, kp2_cnt, ka2_flag, rand_num, ka2_key, host_ip);
             sendto(client_sockfd, pkt_data, length, 0,\
                 (struct sockaddr *) &remote_addr, sizeof(remote_addr));
-            fprintf(drcom_config.log_file, "<==[sended kap2_2 request %d] len = %d\n", \
-                    kp2_cnt, length);
-            fflush(drcom_config.log_file);
-            print_as_hex(pkt_data, length);
+//            fprintf(drcom_config.log_file, "<==[sended kap2_2 request %d] len = %d\n", \
+//                    kp2_cnt, length);
+//            fflush(drcom_config.log_file);
+//            print_as_hex(pkt_data, length);
+            pkt_data_log("\n  <== sended", pkt_data, length);
 
             if (retry_cnt > 5)
             {
@@ -295,18 +313,18 @@ HEART_BEAT_START:
             if ((length = recvfrom(client_sockfd, pkt_data, 1024, 0,\
                 (struct sockaddr *) &remote_addr, &sin_size)) == -1)
             {
-                fprintf(drcom_config.log_file, "recv kap2_2 timeout, retry %d!\n", retry_cnt++);
-                fflush(drcom_config.log_file);
+                log_info(logger, "recv kap2_2 timeout, retry %d!", retry_cnt++);
             }
             else
             {
                 break;
             }
         }
-        fprintf(drcom_config.log_file, "==>[recieved kap2_2 response %d] len = %d\n",\
-                kp2_cnt, length);
-        fflush(drcom_config.log_file);
-        print_as_hex(pkt_data,length);
+//        fprintf(drcom_config.log_file, "==>[recieved kap2_2 response %d] len = %d\n",\
+//                kp2_cnt, length);
+//        fflush(drcom_config.log_file);
+//        print_as_hex(pkt_data,length);
+        pkt_data_log("\n  ==> recieved", pkt_data, length);
         kp2_cnt++;
 
         short_wait_sleep(17);
@@ -324,12 +342,33 @@ HEART_BEAT_START:
 
 int exit_auth(void)
 {
-    fprintf(drcom_config.log_file, "gdut-drcom heart-beat exiting!\r\n");
-    fflush(drcom_config.log_file);
+    log_info(logger, "gdut-drcom heart-beat exiting!");
+    Logger_free(logger);
     drcom_config.exit = 1;
     return 0;
 }
 
+static void pkt_data_log(char * header, uint8_t * pktdata, int len)
+{
+    static char log_buf[1024];
+
+    int i, index = 0;
+    strcpy(log_buf, header);
+    index += strlen(header);
+    index += sprintf(log_buf+index, " len: %d", len);
+
+    for (i=0; i<len; i++)
+    {
+        if (i%16 == 0)
+        {
+            index += sprintf(log_buf + index, "\n  ");
+        }
+        index += sprintf(log_buf + index, "%02hhx ", *(pktdata+i));
+    }
+
+    log_info(logger, log_buf);
+}
+/*
 static void print_as_hex(uint8_t *buf, int len)
 {
     int i;
@@ -342,6 +381,7 @@ static void print_as_hex(uint8_t *buf, int len)
     fprintf(drcom_config.log_file, "\n\n");
     fflush(drcom_config.log_file);
 }
+*/
 
 static uint32_t drcomCRC32(uint8_t *data, int len)
 {
@@ -376,10 +416,6 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     static int is_first = 1;
 
     uint8_t check_mode = seed[0] & 0x03;
-#ifdef DEBUG
-    fprintf(drcom_config.log_file, "check mode: %d\n", check_mode);
-    fflush(drcom_config.log_file);
-#endif
 
     buf[index++] = 0x07;           //code
     buf[index++] = cnt;            //id
@@ -405,7 +441,6 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     index += 4;
     memcpy(buf+index, seed, 4);
     index += 4;
-
     if (drcom_config.enable_crypt == 0)
     {
     /*disable crypt*/
@@ -429,11 +464,6 @@ static int make_keep_alive1_pkt2(uint8_t *buf, uint8_t *seed,\
     /*enable crypt*/
     uint8_t checksum[8] = {0};
     gen_ka1_checksum(checksum, seed, check_mode);
-#ifdef DEBUG
-    fprintf(drcom_config.log_file, "checksum: ");
-    fflush(drcom_config.log_file);
-    print_as_hex(checksum, 8);
-#endif
     memcpy(buf+index, checksum, 8);
     index += 8;
     /*enable crypt*/

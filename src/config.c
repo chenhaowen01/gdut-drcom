@@ -1,4 +1,5 @@
 #include "config.h"
+#include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,19 +26,16 @@ static void strstrip(char *s, char *chars);
 void set_remote_ip(char* ip, int len)
 {
     memcpy(drcom_config.remote_ip, ip, len);
-    printf("set remote_ip = %s\n", drcom_config.remote_ip);
 }
 
 void set_keep_alive1_flag(char* flag, int len)
 {
     sscanf(flag, "%02hhx", &drcom_config.keep_alive1_flag);
-    printf("set keep_alive1_flag = %02hhx\n", drcom_config.keep_alive1_flag);
 }
 
 void set_enable_crypt(int enable)
 {
     drcom_config.enable_crypt = enable;
-    printf("set enable_crypt = %d\n", enable);
 }
 
 void get_version(char* version)
@@ -47,10 +45,15 @@ void get_version(char* version)
 
 void set_log_file(char * log_file, int len)
 {
-    FILE * logp = fopen(log_file, "a");
+    if (!logger)
+    {
+        logger = Logger_create();
+    }
+    FILE * logp = fopen(log_file, "w");
     if (logp)
     {
         drcom_config.log_file = logp;
+        logger->fp = logp;
     }
 }
 
@@ -59,10 +62,6 @@ int parse_config(char *conf_file_name)
 //    char conf_file_name[256] = "/etc/gdut-drcom.conf";
 
     char line_buf[1024];
-#ifdef DEBUG
-    fprintf(stdout, "conf_file_name = %s\n", conf_file_name);
-    fflush(stdout);
-#endif
 
     FILE *fp = fopen(conf_file_name, "r");
     if (fp == NULL)
@@ -75,7 +74,10 @@ int parse_config(char *conf_file_name)
     while(!feof(fp))
     {
         memset(line_buf, 0, sizeof(line_buf));
-        fgets(line_buf, sizeof(line_buf)-1, fp);
+        if (fgets(line_buf, sizeof(line_buf)-1, fp) == NULL)
+        {
+            continue;
+        }
         if (strlen(line_buf) > 0)
         {
             parse_line(line_buf, sizeof(line_buf));

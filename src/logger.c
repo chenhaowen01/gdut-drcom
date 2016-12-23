@@ -1,5 +1,9 @@
 #include "logger.h"
 
+#define LOGFILE_MAXSIZE (1024*1024)
+
+Logger * logger;
+
 Logger * Logger_create( void )
 {
     Logger *l = (Logger *)malloc(sizeof(Logger));
@@ -24,17 +28,26 @@ void Logger_free(Logger *l)
 
 void log_add(Logger *l, int level, const char *msg)
 {
+    static fpos_t pos;
     if (level < l->level) return;
 
     time_t meow = time(NULL);
     char buf[64];
 
     strftime(buf, sizeof(buf), l->datetime_format, localtime(&meow));
+
+    fgetpos(l->fp, &pos);
+    if (pos.__pos > LOGFILE_MAXSIZE)
+    {
+        rewind(l->fp);
+    }
+
     fprintf(l->fp, "[%d] %c, %s : %s\n",
             (int)getpid(),
             LOG_LEVEL_CHARS[level],
             buf,
             msg);
+    fflush(l->fp);
 }
 
 void log_debug(Logger *l, const char *fmt, ...)

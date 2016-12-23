@@ -35,6 +35,8 @@ void log_info(Logger *l, const char *fmt, ...);
 void log_warn(Logger *l, const char *fmt, ...);
 void log_error(Logger *l, const char *fmt, ...);
 
+extern Logger * logger;
+
 #ifdef __cplusplus
 }
 #endif

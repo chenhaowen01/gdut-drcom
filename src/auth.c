@@ -343,7 +343,7 @@ HEART_BEAT_START:
 int exit_auth(void)
 {
     log_info(logger, "gdut-drcom heart-beat exiting!");
-    Logger_free(logger);
+//    Logger_free(logger);
     drcom_config.exit = 1;
     return 0;
 }

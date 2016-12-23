@@ -4,7 +4,7 @@ NAME=gdut-drcom
 
 CFLAGS+= -Wall -O3 -fPIC -DDEBUG -DVERSION=$(VERSION)
 
-objects= config.o auth.o
+objects= config.o auth.o logger.o
 
 # detect OS
 ifeq ($(OS), Windows_NT)

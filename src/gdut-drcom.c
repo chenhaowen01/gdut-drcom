@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
             {"enable-crypt",        no_argument,        0,  3},
             {0,             0,                  0,  0},
         };
-        opt = getopt_long(argc, argv, "hc:v", long_options, &option_index);
+        opt = getopt_long(argc, argv, "hc:l:v", long_options, &option_index);
         if (opt == -1)
         {
             break;

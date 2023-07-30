@@ -33,9 +33,10 @@ int main(int argc, char *argv[])
             {"version",             no_argument,        0,  'v'},
             {"log-file",            required_argument,  0,  'l'},
             {"remote-ip",           required_argument,  0,  0},
-            {"remote-port",         required_argument,  0,  1},
-            {"keep-alive1-flag",    required_argument,  0,  2},
-            {"enable-crypt",        no_argument,        0,  3},
+            {"local-ip",            required_argument,  0,  1},
+            {"remote-port",         required_argument,  0,  2},
+            {"keep-alive1-flag",    required_argument,  0,  3},
+            {"enable-crypt",        no_argument,        0,  4},
             {0,             0,                  0,  0},
         };
         opt = getopt_long(argc, argv, "hc:l:v", long_options, &option_index);
@@ -48,13 +49,16 @@ int main(int argc, char *argv[])
             case 0:     //remote-ip
                 strcpy(drcom_config.remote_ip, optarg);
                 break;
-            case 1:     //remote_port
+            case 1:     //local-ip
+                strcpy(drcom_config.local_ip, optarg);
+                break;
+            case 2:     //remote_port
                 drcom_config.remote_port = atoi(optarg);
                 break;
-            case 2:     //keep_alive1_flag
+            case 3:     //keep_alive1_flag
                 sscanf(optarg, "%02hhx", &drcom_config.keep_alive1_flag);
                 break;
-            case 3:
+            case 4:
                 drcom_config.enable_crypt = 1;
                 break;
             case 'c':
@@ -107,6 +111,7 @@ static void print_help(char *name)
     fprintf(stdout, "  %s\n", name);
     fprintf(stdout, "    --remote-ip <ip addr>               The server ip.\n");
     fprintf(stdout, "\n");
+    fprintf(stdout, "    [--local-ip <ip addr>]              local ip, default as 0.0.0.0.\n");
     fprintf(stdout, "    [--remote-port <port>]              The server port, default as 61440.\n");
     fprintf(stdout, "    [--keep-alive1-flag <flag>]         The keep alive 1 packet's flag.\n"
                     "                                            default as 00.\n");

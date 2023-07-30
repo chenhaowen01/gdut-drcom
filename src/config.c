@@ -13,6 +13,7 @@ struct option_s {
 
 /* extern variables */
 struct config_s drcom_config = {
+    .local_ip = "0.0.0.0",
     .remote_port = 61440,
     .exit = 0,
 };
@@ -26,6 +27,11 @@ static void strstrip(char *s, char *chars);
 void set_remote_ip(char* ip, int len)
 {
     memcpy(drcom_config.remote_ip, ip, len);
+}
+
+void set_local_ip(char* ip, int len)
+{
+    memcpy(drcom_config.local_ip, ip, len);
 }
 
 void set_keep_alive1_flag(char* flag, int len)
@@ -116,6 +122,10 @@ static int parse_line(char *buf, int size)
     if (strcmp(opt.key, "remote_ip") == 0)
     {
         strcpy(drcom_config.remote_ip, opt.value);
+    }
+    else if (strcmp(opt.key, "local_ip") == 0)
+    {
+        strcpy(drcom_config.local_ip, opt.value);
     }
     else if (strcmp(opt.key, "remote_port") == 0)
     {

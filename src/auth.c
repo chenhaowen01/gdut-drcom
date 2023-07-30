@@ -83,10 +83,12 @@ int auth(void)
     }
 
     log_info(logger, "\n  drcom_config.remote_ip = %s\n"
+            "  drcom_config.local_ip = %s\n"
             "  drcom_config.remote_port = %d\n"
             "  drcom_config.keep_alive1_flag = %02hhx\n"
             "  drcom_config.enable_crypt = %d",
             drcom_config.remote_ip,
+            drcom_config.local_ip,
             drcom_config.remote_port,
             drcom_config.keep_alive1_flag,
             drcom_config.enable_crypt);
@@ -134,9 +136,9 @@ int auth(void)
     memset(&local_addr, 0, sizeof(local_addr));
     local_addr.sin_family = AF_INET;
 #ifdef WIN32
-    local_addr.sin_addr.S_un.S_addr = inet_addr("0.0.0.0");
+    local_addr.sin_addr.S_un.S_addr = inet_addr(drcom_config.local_ip);
 #else
-    local_addr.sin_addr.s_addr = inet_addr("0.0.0.0");
+    local_addr.sin_addr.s_addr = inet_addr(drcom_config.local_ip);
 #endif
     local_addr.sin_port=htons(drcom_config.remote_port);
 
